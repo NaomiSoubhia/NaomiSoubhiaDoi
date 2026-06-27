@@ -1,0 +1,71 @@
+
+
+/* HEAD */
+.backgroundTop{
+    background-image: url("../img/marble.png");
+    width: 100%;
+    height: 100vh;
+    background-position: fixed;
+    background-size: cover;
+    background-repeat: no-repeat;
+     opacity: 0.80; 
+}
+
+
+/* MENU */
+
+nav {
+  position: fixed;
+  width: 100%;
+  padding: 15px 20px 0px 0px;
+  display: flex;
+  align-items: center;
+  color: white;
+  font-size: 16px;
+  }
+
+
+
+a {
+  color: inherit;
+  text-decoration: none;
+   padding: 1rem;
+  &:hover,
+  &:focus {
+    text-decoration: underline;
+  }
+ 
+}
+
+
+.list {
+  list-style-type: none;
+  margin-left: auto;
+   display: flex;
+  }
+  
+  li {
+    margin-left: 20px;
+
+  }
+
+
+
+
+.content{
+    height: 200vh;
+}
+
+
+/* INFOS */
+
+.infos{
+background-color: #000;
+color: #fff;
+position: absolute;
+margin-top: 30vh ;
+margin-left: 40vh;
+padding: 2rem;
+width: 30%;
+
+}
