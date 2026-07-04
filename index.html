@@ -12,13 +12,13 @@
 
 <body>
     <div id="loader">
-    <div class="loader-content">
-        <h1 class="loader-logo">NSD</h1>
-        <div class="loading-bar">
-            <div class="loading-progress"></div>
+        <div class="loader-content">
+            <h1 class="loader-logo">NSD</h1>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
         </div>
     </div>
-</div>
     <nav id="menu">
         <a class="logo" href="#">LOGO</a>
         <ul class="list">
@@ -68,20 +68,60 @@
             </div>
         </div>
 
-        <div class="education">
-            <h3 class="title">Education</h3>
-            <img class="line" src="img/line.png" alt="">
+
+
+        <section class="sticky">
+
+            <div class="bg-video">
+                <video autoplay muted loop playsinline class="bg-video">
+                    <source src="img/Firefly data center video with gold and marble 942589.mp4" type="video/mp4">
+                </video>
+            </div>
+
+            <canvas class="outline-layer"></canvas>
+
 
             <div class="cards">
-                <img class="card" src="img/cards.png" alt="">
-                <img class="card" src="img/cards.png" alt="">
-                <img class="card" src="img/cards.png" alt="">
+                <div class="card">
+                    <div class="card-img">
+                        <video autoplay muted loop playsinline class="">
+                    <source src="img/Firefly data center video with gold and marble 942589.mp4" type="video/mp4">
+                         </video>
+
+                    </div>
+                    <div class="card-title">
+                        <h3 class=>Georgian College</h3>
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dicta soluta amet iste, sunt tenetur quisquam quia perspiciatis doloremque reiciendis fuga quae similique neque minima, quibusdam laborum rem excepturi repudiandae voluptas. Lorem ipsum dolor sit amet consectetur adipisicing elit. Dicta soluta amet iste, sunt tenetur quisquam quia perspiciatis doloremque reiciendis fuga quae similique neque minima, quibusdam laborum rem excepturi repudiandae voluptas.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-img"><img src="" alt=""></div>
+                    <div class="card-title">
+                        <h3 class=>FIAP</h3>
+                        <p>Paragraph</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-img"><img src="" alt=""></div>
+                    <div class="card-title">
+                        <h3 class=>Fiap School</h3>
+                        <p>Paragraph</p>
+                    </div>
+                </div>
+
             </div>
-            
-        </div>
+            <canvas class="fill-layer"></canvas>
+
+        </section>
+
 
 
     </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
 
 </body>
 

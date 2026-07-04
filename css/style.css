@@ -1,9 +1,18 @@
 /* GOOGLE FONTS */
 @import url('https://fonts.googleapis.com/css2?family=Carattere&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Instrument+Serif:ital@0;1&display=swap');
 
-body{
-   font-family: "Instrument Serif", serif;
+
+*{
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  font-family: "Instrument Serif", serif;
   font-weight: 300;
+}
+
+
+html,body{
+  width: 100%;
   
 }
 
@@ -118,7 +127,8 @@ nav {
   top: 0;
   font-family: "Instrument Sans", sans-serif;
   text-transform: uppercase;
-    left: 0;
+  left: 0;
+  height: 3rem;
    transition: background-color 0.4s ease;
 
   }
@@ -188,11 +198,11 @@ background-color: #000;
 color: #fff;
 position: absolute;
 top: 30vh;
-    left: 20vh;
+    left: 22vh;
 padding: 5rem;
 
 padding-inline: 8rem;
-width: 35%;
+width: 48%;
 opacity: 0.8;
 position: fixed;
  z-index: 2;
@@ -281,6 +291,7 @@ filter: grayscale(100%) contrast(130%);
   margin-top: -40px;
   padding-top: 2rem;
   text-align: left;
+  padding-bottom: 10rem;
 
 }
 
@@ -329,23 +340,20 @@ margin-inline: auto;
   position: relative;
   width: 9rem;
   margin-top: 10px;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
   height: 0.2rem;
 }
 
 .aboutParagraph{
   line-height: 1.5rem;
-  margin-right: 3rem;
+  margin-right: 8rem;
+  margin-top: 0;
   letter-spacing: 0.5px;
    font-weight: 400;
    font-family: "Instrument Sans", sans-serif;
  
 }
 
-.buttonAbout{
-  margin-top: 2rem;
-  margin-bottom: 9rem;
-}
 
 /* button */
 .btn-100 {
@@ -392,50 +400,105 @@ margin-inline: auto;
 
 /* Eduaction */
 
-.title{
-    margin-top: 8rem;
-  font-size: 40px;
-  margin-bottom: 0;
-  letter-spacing: 1px;
-  text-align: center;
+.sticky{
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+    inset: 0;
 }
 
-.line{
-  margin-inline: auto;
-  display: block;
-  position: relative;
-  width: 9rem;
-  margin-top: 10px;
-  margin-bottom: 3rem;
-  height: 0.2rem;
+.bg-video{
+    position: absolute;
+    inset: 0;
 }
 
+.sticky video{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+canvas{
+  position: absolute;
+  width: 150%;
+  height: 150%;
+}
+
+canvas outline-layer{
+  z-index: 5;
+}
+
+canvas fill-layer{
+  z-index: 5;
+
+}
+
+.cards{
+  position: absolute;
+    top:0;
+  left:0;
+    width: 300%;
+    height: 100vh;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    will-change: transform;
+    z-index: 3;
+}
 
 .card{
-    transition:.35s;
+  position: relative;
+  width: 10%;
+  height: 75%;
+  background-color: #000;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  padding: 1.5em;
+  color: #fff;
 }
 
-.card:hover{
+.card-img,.card-title{
+  flex: 1;
+  overflow: hidden;
+}
 
-    transform:
-        translateY(-12px)
-        scale(1.05);
-
-    box-shadow:
-        0 20px 50px rgba(255,210,119,.35);
+.card-title{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 
 }
 
-/* ANIMATIONS */
-
-.hidden{
-    opacity:0;
-    transform:translateY(70px);
-    transition:1s;
+.card-title h3{
+  text-transform: uppercase;
+  font-size: 3rem;
 }
 
-.show{
-    opacity:1;
-    transform:translateY(0);
+  video {
+  filter: grayscale(100%);
 }
 
+
+
+.card-title p{
+  margin: 0;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent]{
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped{
+  overflow: clip;
+}
+
+.lenis.lenis-smooth iframe{
+pointer-events: none;
+}
+
+@media(max-width: 900px){
+  .card{
+    width: 25%;
+  }
+}
