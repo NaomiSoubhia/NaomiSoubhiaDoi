@@ -105,7 +105,6 @@ window.addEventListener("load", animateAbout);
 
 
 //TRIANGLE ANIMATION
-
 document.addEventListener("DOMContentLoaded", () => {
 
     gsap.registerPlugin(ScrollTrigger); 
@@ -129,8 +128,40 @@ document.addEventListener("DOMContentLoaded", () => {
     const fillCanvas = document.querySelector(".fill-layer");
     const outlineCtx = outlineCanvas.getContext("2d");
     const fillCtx = fillCanvas.getContext("2d");
-    const mainBgVideo = document.getElementById("main-bg-video");
-    let currentVideoSrc = ""; 
+    
+    // --- VIDEO CROSSFADE SETUP ---
+    // Instead of one video, we select or dynamically create a dual-video setup.
+    let mainBgVideo = document.getElementById("main-bg-video");
+    let secondaryBgVideo = document.getElementById("secondary-bg-video");
+    
+    // If you don't have a second video in your HTML, this will create it automatically
+    if (mainBgVideo && !secondaryBgVideo) {
+        secondaryBgVideo = mainBgVideo.cloneNode(true);
+        secondaryBgVideo.id = "secondary-bg-video";
+        // Put it right next to the main video
+        mainBgVideo.parentNode.appendChild(secondaryBgVideo);
+        
+        // Ensure CSS layers them correctly via JS style fallbacks
+        gsap.set([mainBgVideo, secondaryBgVideo], {
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            zIndex: -1
+        });
+    }
+
+    // Keep track of which video element is currently active/visible
+    let activeVideoElement = mainBgVideo;
+    let currentVideoSrc = mainBgVideo ? mainBgVideo.querySelector("source")?.getAttribute("src") || mainBgVideo.src : ""; 
+    
+    // Initialize starting opacities
+    if (mainBgVideo && secondaryBgVideo) {
+        gsap.set(mainBgVideo, { opacity: 1 });
+        gsap.set(secondaryBgVideo, { opacity: 0 });
+    }
 
     function setCanvasSize(canvas, ctx) {
         const dpr = window.devicePixelRatio || 1;
@@ -287,7 +318,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // --- CRIAÇÃO DO SCROLLTRIGGER COM ACESSO SEGURO ÀS VARIÁVEIS ---
+    // --- SCROLLTRIGGER WITH MIDDLE-OF-SCREEN DETECTION ---
     ScrollTrigger.create({
         trigger: stickySection,
         start: "top top",
@@ -299,34 +330,51 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const cardsContainer = document.querySelector(".cards");
             const allCards = document.querySelectorAll(".card");
-            const progress = Math.min(self.progress / 0.654, 1);
-
+            
             if (cardsContainer && allCards.length > 0) {
+                const cardMovementProgress = Math.min(self.progress / 0.654, 1);
                 gsap.set(cardsContainer, {
-                    x: -progress * window.innerWidth * 2, 
+                    x: -cardMovementProgress * window.innerWidth * 2, 
                 });
 
-                const totalCards = allCards.length;
-                let activeIndex = Math.floor(progress * totalCards);
-                
-                if (activeIndex >= totalCards) activeIndex = totalCards - 1;
-                if (activeIndex < 0) activeIndex = 0;
+                // Detect the exact horizontal center line of the screen
+                const screenCenter = window.innerWidth / 2;
+                let activeIndex = 0;
+                let closestDistance = Infinity;
+
+                // Loop through cards to see which one's center is closest to the screen center
+                allCards.forEach((card, index) => {
+                    const rect = card.getBoundingClientRect();
+                    const cardCenter = rect.left + (rect.width / 2);
+                    const distanceToCenter = Math.abs(screenCenter - cardCenter);
+
+                    if (distanceToCenter < closestDistance) {
+                        closestDistance = distanceToCenter;
+                        activeIndex = index;
+                    }
+                });
 
                 const activeCard = allCards[activeIndex];
                 const targetVideoSrc = activeCard.getAttribute("data-video");
 
-                if (mainBgVideo && targetVideoSrc && currentVideoSrc !== targetVideoSrc) {
+                if (mainBgVideo && secondaryBgVideo && targetVideoSrc && currentVideoSrc !== targetVideoSrc) {
                     currentVideoSrc = targetVideoSrc;
                     
-                    gsap.to(mainBgVideo, {
-                        opacity: 0.3,
-                        duration: 0.2,
-                        onComplete: () => {
-                            mainBgVideo.src = targetVideoSrc;
-                            mainBgVideo.play().catch(err => console.log("Vídeo interceptado:", err));
-                            gsap.to(mainBgVideo, { opacity: 1, duration: 0.3 });
-                        }
-                    });
+                    const incomingVideoElement = (activeVideoElement === mainBgVideo) ? secondaryBgVideo : mainBgVideo;
+                    const outgoingVideoElement = activeVideoElement;
+                    
+                    incomingVideoElement.src = targetVideoSrc;
+                    incomingVideoElement.load();
+                    
+                    incomingVideoElement.onloadedmetadata = () => {
+                        incomingVideoElement.play().catch(err => console.log("Playback bypass:", err));
+                        
+                        // Pure opacity crossfade
+                        gsap.to(incomingVideoElement, { opacity: 1, duration: 0.6, ease: "power1.inOut" });
+                        gsap.to(outgoingVideoElement, { opacity: 0, duration: 0.6, ease: "power1.inOut" });
+                        
+                        activeVideoElement = incomingVideoElement;
+                    };
                 }
             }
         },
