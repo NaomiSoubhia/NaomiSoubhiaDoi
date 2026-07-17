@@ -103,6 +103,9 @@ function animateAbout() {
 window.addEventListener("scroll", animateAbout);
 window.addEventListener("load", animateAbout);
 
+
+//TRIANGLE ANIMATION
+
 document.addEventListener("DOMContentLoaded", () => {
 
     gsap.registerPlugin(ScrollTrigger); 
@@ -119,12 +122,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     gsap.ticker.lagSmoothing(0);
 
+    // --- GLOBAL VARIABLES ---
     const stickySection = document.querySelector(".sticky");
     const stickyHeight = window.innerHeight * 5;
     const outlineCanvas = document.querySelector(".outline-layer");
     const fillCanvas = document.querySelector(".fill-layer");
     const outlineCtx = outlineCanvas.getContext("2d");
     const fillCtx = fillCanvas.getContext("2d");
+    const mainBgVideo = document.getElementById("main-bg-video");
+    let currentVideoSrc = ""; 
 
     function setCanvasSize(canvas, ctx) {
         const dpr = window.devicePixelRatio || 1;
@@ -188,7 +194,6 @@ document.addEventListener("DOMContentLoaded", () => {
             ctx.fillStyle = "#fff";
             ctx.strokeStyle = "#fff";
 
-            // Slightly thicker stroke to hide background seams completely
             ctx.lineWidth = fillScale >= 0.99 ? 1.5 : lineWidth;
             ctx.stroke();
             ctx.fill();
@@ -204,56 +209,47 @@ document.addEventListener("DOMContentLoaded", () => {
         outlineCtx.clearRect(0, 0, outlineCanvas.width, outlineCanvas.height);
         fillCtx.clearRect(0, 0, fillCanvas.width, fillCanvas.height);
 
-        const animationProgress = gsap.utils.clamp(
-            0,
-            1,
-            (scrollProgress - 0.65) / 0.35
-        );
-
+        const animationProgress = gsap.utils.clamp(0, 1, (scrollProgress - 0.65) / 0.35);
         let needsUpdate = false;
         const animationSpeed = 0.15;
 
-        // 1. Draw Outlines
         triangleStates.forEach((state) => {
             if (state.scale < 1) {
                 const x = state.col * (triangleSize * 0.5) + triangleSize / 2 + canvasXPosition;
                 const y = state.row * triangleSize + triangleSize / 2;
                 const flipped = (state.row + state.col) % 2 !== 0;
-
                 drawTriangle(outlineCtx, x, y, 0, flipped);
             }
         });
 
-        // 2. Update and Draw Fills
         triangleStates.forEach((state, key) => {
-           const shouldBeVisible = animationProgress >= 0.99 || (animationProgress > 0 && state.order <= animationProgress);
-        
-        const targetScale = shouldBeVisible ? 1 : 0;
-        const newScale = state.scale + (targetScale - state.scale) * animationSpeed;
+            const shouldBeVisible = animationProgress >= 0.99 || (animationProgress > 0 && state.order <= animationProgress);
+            const targetScale = shouldBeVisible ? 1 : 0;
+            const newScale = state.scale + (targetScale - state.scale) * animationSpeed;
 
-        state.scale = newScale;
+            state.scale = newScale;
 
-        if (Math.abs(targetScale - state.scale) > 0.001) {
-            needsUpdate = true;
-        } else {
-            state.scale = targetScale;
+            if (Math.abs(targetScale - state.scale) > 0.001) {
+                needsUpdate = true;
+            } else {
+                state.scale = targetScale;
+            }
+
+            if (state.scale >= SCALE_THRESHOLD) {
+                const x = state.col * (triangleSize * 0.5) + triangleSize / 2 + canvasXPosition;
+                const y = state.row * triangleSize + triangleSize / 2;
+                const flipped = (state.row + state.col) % 2 !== 0;
+                drawTriangle(fillCtx, x, y, state.scale, flipped);
+            }
+        });
+
+        if (needsUpdate) {
+            animationFrameId = requestAnimationFrame(() => drawGrid(scrollProgress));
         }
-
-        if(state.scale >= SCALE_THRESHOLD){
-            const x = state.col * (triangleSize * 0.5) + triangleSize / 2 + canvasXPosition;
-            const y = state.row * triangleSize + triangleSize / 2;
-            const flipped = (state.row + state.col) % 2 !== 0;
-            drawTriangle(fillCtx, x, y, state.scale, flipped);
-        }
-    });
-
-    if(needsUpdate){
-        animationFrameId = requestAnimationFrame(() => drawGrid(scrollProgress));
     }
-}
 
     function initializeTriangles() {
-        const cols = Math.ceil(window.innerWidth / (triangleSize * 0.5)) + 3; 
+        const cols = Math.ceil(window.innerWidth / (triangleSize * 0.5)) + 4; 
         const rows = Math.ceil(window.innerHeight / triangleSize) + 1;
         const totalTriangles = cols * rows;
 
@@ -291,6 +287,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // --- CRIAÇÃO DO SCROLLTRIGGER COM ACESSO SEGURO ÀS VARIÁVEIS ---
     ScrollTrigger.create({
         trigger: stickySection,
         start: "top top",
@@ -300,13 +297,37 @@ document.addEventListener("DOMContentLoaded", () => {
             canvasXPosition = -self.progress * 130;
             drawGrid(self.progress);
 
-            const cards = document.querySelector(".cards");
+            const cardsContainer = document.querySelector(".cards");
+            const allCards = document.querySelectorAll(".card");
             const progress = Math.min(self.progress / 0.654, 1);
 
-            if (cards) {
-                gsap.set(cards, {
+            if (cardsContainer && allCards.length > 0) {
+                gsap.set(cardsContainer, {
                     x: -progress * window.innerWidth * 2, 
                 });
+
+                const totalCards = allCards.length;
+                let activeIndex = Math.floor(progress * totalCards);
+                
+                if (activeIndex >= totalCards) activeIndex = totalCards - 1;
+                if (activeIndex < 0) activeIndex = 0;
+
+                const activeCard = allCards[activeIndex];
+                const targetVideoSrc = activeCard.getAttribute("data-video");
+
+                if (mainBgVideo && targetVideoSrc && currentVideoSrc !== targetVideoSrc) {
+                    currentVideoSrc = targetVideoSrc;
+                    
+                    gsap.to(mainBgVideo, {
+                        opacity: 0.3,
+                        duration: 0.2,
+                        onComplete: () => {
+                            mainBgVideo.src = targetVideoSrc;
+                            mainBgVideo.play().catch(err => console.log("Vídeo interceptado:", err));
+                            gsap.to(mainBgVideo, { opacity: 1, duration: 0.3 });
+                        }
+                    });
+                }
             }
         },
     });
