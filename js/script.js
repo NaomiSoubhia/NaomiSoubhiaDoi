@@ -23,7 +23,7 @@ window.addEventListener("scroll", () => {
 const title = document.getElementById("name");
 
 let text = "";
-let i = 0;
+ i = 0;
 
 if (title) {
     text = title.innerText;
@@ -102,3 +102,212 @@ function animateAbout() {
 
 window.addEventListener("scroll", animateAbout);
 window.addEventListener("load", animateAbout);
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    gsap.registerPlugin(ScrollTrigger); 
+    const lenis = new Lenis({
+        smoothWheel: true,
+        autoRaf: false
+    });
+
+    lenis.on("scroll", ScrollTrigger.update);
+
+    gsap.ticker.add((time) => {
+        lenis.raf(time * 1000);
+    });
+
+    gsap.ticker.lagSmoothing(0);
+
+    const stickySection = document.querySelector(".sticky");
+    const stickyHeight = window.innerHeight * 5;
+    const outlineCanvas = document.querySelector(".outline-layer");
+    const fillCanvas = document.querySelector(".fill-layer");
+    const outlineCtx = outlineCanvas.getContext("2d");
+    const fillCtx = fillCanvas.getContext("2d");
+
+    function setCanvasSize(canvas, ctx) {
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = window.innerWidth * dpr;
+        canvas.height = window.innerHeight * dpr;
+        canvas.style.width = `${window.innerWidth}px`;
+        canvas.style.height = `${window.innerHeight}px`;
+        ctx.scale(dpr, dpr);
+    }
+
+    setCanvasSize(outlineCanvas, outlineCtx);
+    setCanvasSize(fillCanvas, fillCtx);
+
+    const triangleSize = 250;
+    const lineWidth = 0.5;
+    const SCALE_THRESHOLD = 0.01;
+    const triangleStates = new Map();
+
+    let animationFrameId = null;
+    let canvasXPosition = 0;
+
+    function drawTriangle(ctx, x, y, fillScale = 0, flipped = false) {
+        const halfSize = triangleSize / 2;
+
+        if (fillScale < SCALE_THRESHOLD) {
+            ctx.beginPath();
+            if (!flipped) {
+                ctx.moveTo(x, y - halfSize);
+                ctx.lineTo(x + halfSize, y + halfSize);
+                ctx.lineTo(x - halfSize, y + halfSize);
+            } else {
+                ctx.moveTo(x, y + halfSize);
+                ctx.lineTo(x + halfSize, y - halfSize);
+                ctx.lineTo(x - halfSize, y - halfSize);
+            }
+            ctx.closePath();
+            ctx.strokeStyle = "rgba(255,255,255, 0.75)";
+            ctx.lineWidth = lineWidth;
+            ctx.stroke();
+        }
+
+        if (fillScale >= SCALE_THRESHOLD) {
+            ctx.save();
+            ctx.translate(x, y);
+            
+            const renderScale = fillScale >= 0.99 ? fillScale * 1.006 : fillScale;
+            ctx.scale(renderScale, renderScale);
+            ctx.translate(-x, -y);
+
+            ctx.beginPath();
+            if (!flipped) {
+                ctx.moveTo(x, y - halfSize);
+                ctx.lineTo(x + halfSize, y + halfSize);
+                ctx.lineTo(x - halfSize, y + halfSize);
+            } else {
+                ctx.moveTo(x, y + halfSize);
+                ctx.lineTo(x + halfSize, y - halfSize);
+                ctx.lineTo(x - halfSize, y - halfSize);
+            }
+            ctx.closePath();
+            ctx.fillStyle = "#fff";
+            ctx.strokeStyle = "#fff";
+
+            // Slightly thicker stroke to hide background seams completely
+            ctx.lineWidth = fillScale >= 0.99 ? 1.5 : lineWidth;
+            ctx.stroke();
+            ctx.fill();
+            ctx.restore();
+        }
+    }
+
+    function drawGrid(scrollProgress = 0) {
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+        }
+
+        outlineCtx.clearRect(0, 0, outlineCanvas.width, outlineCanvas.height);
+        fillCtx.clearRect(0, 0, fillCanvas.width, fillCanvas.height);
+
+        const animationProgress = gsap.utils.clamp(
+            0,
+            1,
+            (scrollProgress - 0.65) / 0.35
+        );
+
+        let needsUpdate = false;
+        const animationSpeed = 0.15;
+
+        // 1. Draw Outlines
+        triangleStates.forEach((state) => {
+            if (state.scale < 1) {
+                const x = state.col * (triangleSize * 0.5) + triangleSize / 2 + canvasXPosition;
+                const y = state.row * triangleSize + triangleSize / 2;
+                const flipped = (state.row + state.col) % 2 !== 0;
+
+                drawTriangle(outlineCtx, x, y, 0, flipped);
+            }
+        });
+
+        // 2. Update and Draw Fills
+        triangleStates.forEach((state, key) => {
+           const shouldBeVisible = animationProgress >= 0.99 || (animationProgress > 0 && state.order <= animationProgress);
+        
+        const targetScale = shouldBeVisible ? 1 : 0;
+        const newScale = state.scale + (targetScale - state.scale) * animationSpeed;
+
+        state.scale = newScale;
+
+        if (Math.abs(targetScale - state.scale) > 0.001) {
+            needsUpdate = true;
+        } else {
+            state.scale = targetScale;
+        }
+
+        if(state.scale >= SCALE_THRESHOLD){
+            const x = state.col * (triangleSize * 0.5) + triangleSize / 2 + canvasXPosition;
+            const y = state.row * triangleSize + triangleSize / 2;
+            const flipped = (state.row + state.col) % 2 !== 0;
+            drawTriangle(fillCtx, x, y, state.scale, flipped);
+        }
+    });
+
+    if(needsUpdate){
+        animationFrameId = requestAnimationFrame(() => drawGrid(scrollProgress));
+    }
+}
+
+    function initializeTriangles() {
+        const cols = Math.ceil(window.innerWidth / (triangleSize * 0.5)) + 3; 
+        const rows = Math.ceil(window.innerHeight / triangleSize) + 1;
+        const totalTriangles = cols * rows;
+
+        const positions = [];
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+                positions.push({ row: r, col: c, key: `${r}-${c}` });
+            }
+        }
+
+        for (let i = positions.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [positions[i], positions[j]] = [positions[j], positions[i]];
+        }
+
+        positions.forEach((pos, index) => {
+            triangleStates.set(pos.key, {
+                order: (index + 1) / totalTriangles,
+                scale: 0,
+                row: pos.row,
+                col: pos.col,
+            });
+        });
+    }
+
+    initializeTriangles();
+
+    window.addEventListener("resize", () => {
+        setCanvasSize(outlineCanvas, outlineCtx);
+        setCanvasSize(fillCanvas, fillCtx);
+        triangleStates.clear();
+        initializeTriangles();
+        if (ScrollTrigger.getAll().length > 0) {
+            drawGrid(ScrollTrigger.getAll()[0].progress);
+        }
+    });
+
+    ScrollTrigger.create({
+        trigger: stickySection,
+        start: "top top",
+        end: `+=${stickyHeight}px`,
+        pin: true,
+        onUpdate: (self) => {
+            canvasXPosition = -self.progress * 130;
+            drawGrid(self.progress);
+
+            const cards = document.querySelector(".cards");
+            const progress = Math.min(self.progress / 0.654, 1);
+
+            if (cards) {
+                gsap.set(cards, {
+                    x: -progress * window.innerWidth * 2, 
+                });
+            }
+        },
+    });
+});
