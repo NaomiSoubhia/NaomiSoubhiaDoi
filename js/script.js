@@ -9,15 +9,6 @@ window.addEventListener("load", async () => {
 });
 
 
-// MENU
-const menu = document.querySelector("#menu");
-
-window.addEventListener("scroll", () => {
-    if (menu) {
-        menu.classList.toggle("active", window.scrollY > 200);
-    }
-});
-
 
 // TYPE NAME
 const title = document.getElementById("name");
