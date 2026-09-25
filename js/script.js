@@ -377,6 +377,47 @@ document.addEventListener("DOMContentLoaded", () => {
                     };
                 }
             }
+
+            
         },
     });
+
+const workSection = document.querySelector(".work");
+const carousel = document.querySelector(".carousel");
+const cards = gsap.utils.toArray(".block");
+
+
+
+if (workSection && carousel && cards.length) {
+
+const gap = parseFloat(getComputedStyle(carousel).gap);
+const cardHeight = cards[0].offsetHeight + gap;
+ 
+const centerOffset =
+(window.innerHeight - cards[0].offsetHeight) / 2;
+ 
+const maxMove =
+(cards.length - 1) * cardHeight;
+
+gsap.fromTo(
+    carousel,
+    {
+        y: centerOffset
+    },
+    {
+        y: centerOffset - maxMove,
+        ease: "none",
+
+        scrollTrigger: {
+            trigger: workSection,
+            start: "top top",
+            end: `+=${maxMove * 3}`,
+            pin: true,
+            scrub: true
+        }
+    }
+);
+
+}
 });
+
