@@ -10,14 +10,15 @@ window.addEventListener("load", async () => {
 
 
 
+
 // TYPE NAME
 const title = document.getElementById("name");
 
 let text = "";
- i = 0;
+let i = 0;
 
 if (title) {
-    text = title.innerText;
+    text = title.innerText;     
     title.innerText = "";
 }
 
@@ -97,6 +98,91 @@ window.addEventListener("load", animateAbout);
 
 //TRIANGLE ANIMATION
 document.addEventListener("DOMContentLoaded", () => {
+
+// MENU
+
+const menu = document.querySelector(".menu");
+const menuContent = document.querySelector(".menu-content");
+const menuToggle = document.querySelector(".nav-toggler");
+
+let menuOpen = false;
+
+// Initial state
+gsap.set(menu, {
+  autoAlpha: 0,
+  pointerEvents: "none"
+});
+
+const menuTl = gsap.timeline({
+  paused: true
+});
+
+menuTl
+.to(menu, {
+  autoAlpha: 1,
+  pointerEvents: "all",
+  duration: 0.4
+})
+.fromTo(
+  menuContent,
+  {
+    y: 100,
+    opacity: 0,
+    rotateX: -15,
+    filter: "blur(15px)"
+  },
+  {
+    y: 0,
+    opacity: 1,
+    rotateX: 0,
+    filter: "blur(0px)",
+    duration: 1,
+    ease: "power4.out"
+  },
+  "-=0.2"
+)
+.from(
+  ".menu-link",
+  {
+    y: 80,
+    opacity: 0,
+    duration: 0.7,
+    stagger: 0.1,
+    ease: "power4.out"
+  },
+  "-=0.7"
+)
+.from(
+  ".menu-secondary-link",
+  {
+    y: 30,
+    opacity: 0,
+    stagger: 0.05,
+    duration: 0.5
+  },
+  "-=0.5"
+);
+
+menuToggle.addEventListener("click", () => {
+  if (!menuOpen) {
+    menuTl.play();
+
+    if (typeof lenis !== "undefined") {
+      lenis.stop();
+    }
+
+  } else {
+    menuTl.reverse();
+
+    if (typeof lenis !== "undefined") {
+      lenis.start();
+    }
+  }
+
+  menuOpen = !menuOpen;
+});
+
+
 
     gsap.registerPlugin(ScrollTrigger); 
     const lenis = new Lenis({
@@ -410,5 +496,8 @@ gsap.fromTo(
 );
 
 }
+
+gsap.registerPlugin(ScrollTrigger, SplitText);
+
 });
 
