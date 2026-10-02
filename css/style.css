@@ -136,16 +136,26 @@ nav{
     text-transform: uppercase;
     color: #fff;
     cursor: pointer;
+    
+    
 }
-
 
 
 
 .nav-toggler{
   padding: 1.5rem 2rem;
-  font-size: 1;
+  font-size: 1rem;
+  color: #fff;
 }
 
+.nav-toggler p {
+  color: #fff;
+  transition: color 0.3s ease;
+}
+
+nav.light .nav-toggler p {
+  color: #000;
+}
 
 .nav-logo a img{
   margin-right: 2rem;
@@ -178,7 +188,7 @@ transform: translate(-50%, -50%);
 
 .menu-links{
   height: 100%;
-  padding-top: 12vh;
+  padding-top: 3rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -324,7 +334,7 @@ h2{
   
 }
 
-p{
+body p{
   font-family: "Instrument Sans", sans-serif;
   font-weight: 400;
   font-size: 14px;
