@@ -201,6 +201,7 @@
         gsap.ticker.lagSmoothing(0);
 
         // --- GLOBAL VARIABLES ---
+        let canvasActive = false;
         const stickySection = document.querySelector(".sticky");
         const stickyHeight = window.innerHeight * 5;
         const outlineCanvas = document.querySelector(".outline-layer");
@@ -397,6 +398,9 @@
             }
         });
 
+
+
+
         // --- SCROLLTRIGGER WITH MIDDLE-OF-SCREEN DETECTION ---
         ScrollTrigger.create({
             trigger: stickySection,
@@ -404,8 +408,18 @@
             end: `+=${stickyHeight}px`,
             pin: true,
             onUpdate: (self) => {
+                
                 canvasXPosition = -self.progress * 130;
                 drawGrid(self.progress);
+
+                canvasActive = self.progress >= 0.70;
+
+                if (canvasActive) {
+                    nav.classList.add("light");
+                } else {
+                    nav.classList.remove("light");
+                }
+                
 
                 const cardsContainer = document.querySelector(".cards");
                 const allCards = document.querySelectorAll(".card");
@@ -459,6 +473,15 @@
 
                 
             },
+        });
+
+
+        ScrollTrigger.create({
+            trigger: ".work",
+            start: "90% bottom",
+
+            onEnter: () => nav.classList.remove("light"),
+            onLeaveBack: () => nav.classList.add("light")
         });
 
     const workSection = document.querySelector(".work");
@@ -520,12 +543,10 @@ function updateNavColor() {
     if (!element) return;
 
     // Find the section/background underneath
-    const sticky = element.closest(".sticky");
     const about = element.closest(".about");
     const textAbout = element.closest(".textAbout");
-    const work = element.closest(".work");
     const projects = element.closest(".projects");
-    const canvas = element.matches(".outline-layer, .fill-layer");
+    const sticky = element.closest(".sticky");
 
     // ABOUT
     if (about) {
@@ -541,26 +562,10 @@ function updateNavColor() {
     }
 
 
-
-    if (canvas) {
-    nav.classList.add("light");
-    return;
-    }
-
-    // STICKY  / VIDEO
     if (sticky) {
-        // Your sticky section has a dark/video background
-        nav.classList.remove("light");
         return;
     }
-
-
-
-    // WORK
-    if (work) {
-        nav.classList.remove("light");
-        return;
-    }
+    
 
     // PROJECTS
     if (projects) {
