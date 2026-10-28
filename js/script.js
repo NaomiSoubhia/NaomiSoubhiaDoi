@@ -12,7 +12,7 @@
     const menuContent = document.querySelector(".menu-content");
     const navToggler = document.querySelector(".nav-toggler");
     const nav = document.querySelector("nav");
-    const navTogglerText = document.querySelector(".nav-toggler p");
+    const navTogglerText = document.querySelector(".nav-toggler span");
 
 
     // TYPE NAME
@@ -105,8 +105,6 @@
 
     // MENU
 
-
-
     let menuOpen = false;
 
     // Initial state
@@ -171,6 +169,9 @@
 
         if (typeof lenis !== "undefined") {
         lenis.stop();
+        }
+        if (nav.classList.contains("light")){
+            nav.classList.remove("light");
         }
 
     } else {
@@ -582,5 +583,30 @@ window.addEventListener("resize", updateNavColor);
 window.addEventListener("load", updateNavColor);
 
 
-    });
+//Text Appear animation calculate
+
+window.addEventListener("load", () => {
+    const title = document.querySelector(".projects .title");
+    const line = document.querySelector(".lineProjects");
+
+    if (!title || !line) return;
+
+    function updateProjectsPosition() {
+        const titleTop =
+            title.getBoundingClientRect().top + window.scrollY;
+
+        const start = titleTop - window.innerHeight -200;
+        const end = titleTop -200;
+
+        [title, line].forEach(element => {
+            element.style.setProperty("--projects-start", `${start}px`);
+            element.style.setProperty("--projects-end", `${end}px`);
+        });
+    }
+
+    updateProjectsPosition();
+    window.addEventListener("resize", updateProjectsPosition);
+});
+});
+
 

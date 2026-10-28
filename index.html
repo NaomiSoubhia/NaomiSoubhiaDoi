@@ -4,16 +4,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naomi Soubhia Doi | Computer Programming Co-op Student</title>
+    <meta name="description"
+        content="Portfolio of Naomi Soubhia Doi, a Computer Programming co-op student at Georgian College with IT support experience and skills in C#/.NET, SQL, Python and Power BI.">
+    <meta name="author" content="Naomi Soubhia Doi">
+    <meta name="theme-color" content="#000000">
+
+    <!-- Link preview (LinkedIn, Slack, etc.) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Naomi Soubhia Doi | Computer Programming Co-op Student">
+    <meta property="og:description"
+        content="Computer Programming co-op student with IT support experience. C#/.NET, SQL, Python, Power BI.">
+
+
+    <link rel="icon" href="img/logoGold.png" type="image/png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Carattere&amp;family=Instrument+Sans:ital,wght@0,400..700;1,400..700&amp;family=Instrument+Serif:ital@0;1&amp;display=swap">
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="shortcut icon" href="img/logoGold.png" type="image/x-icon">
-    <title>Naomi Soubhia Doi</title>
+
+    <!-- Without JavaScript the loader would cover the page forever -->
+    <noscript>
+        <style>
+            #loader {
+                display: none
+            }
+        </style>
+    </noscript>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/gsap.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/ScrollTrigger.min.js" defer></script>
+    <!-- script.js registers SplitText, so keep this until it is removed from the JS too -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/SplitText.min.js" defer></script>
+    <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js" defer></script>
+    <script src="js/script.js" defer></script>
+
 </head>
 
 <body>
-    <div id="loader">
+
+
+    <div id="loader" aria-hidden="true">
         <div class="loader-content">
-            <h1 class="loader-logo">NSD</h1>
+            <div class="loader-logo">NSD</div>
             <div class="loading-bar">
                 <div class="loading-progress"></div>
             </div>
@@ -22,182 +58,226 @@
 
     <!-- Menu -->
 
-    <nav>
+    <nav aria-label="Main">
         <div class="nav-logo">
-            <a href="#">
-                <img src="img/logo.png" alt="Logo">
+            <a href="#top" aria-label="Naomi Soubhia Doi, back to top">
+                <img src="img/logo.png" alt="">
             </a>
         </div>
-        <div class="nav-toggler">
-            <p>Menu</p>
-        </div>
+        <button class="nav-toggler" type="button" aria-expanded="false" aria-controls="menu">
+            <span class="nav-toggler-text">Menu</span>
+        </button>
     </nav>
 
-    <div class="menu">
+    <div class="menu" id="menu">
         <div class="menu-content">
 
-            <div class="menu-links">
+            <div class="menu-links" role="navigation" aria-label="Site menu">
                 <div class="menu-link">
-                    <a href="#">About</a>
+                    <a href="#about">About</a>
                 </div>
 
                 <div class="menu-link">
-                    <a href="#">Work</a>
+                    <a href="#work">Work</a>
                 </div>
 
                 <div class="menu-link">
-                    <a href="#">Contact</a>
+                    <a href="#contact">Contact</a>
                 </div>
 
                 <div class="menu-secondary-links">
                     <div class="menu-secondary-link">
-                        <a href="">Projects</a>
+                        <a href="#projects">Projects</a>
                     </div>
 
                     <div class="menu-secondary-link">
-                        <a href="">Projects</a>
+                        <a href="https://www.linkedin.com/in/naomisoubhia-doi" target="_blank"
+                            rel="noopener noreferrer">LinkedIn</a>
                     </div>
-
                 </div>
-
-
             </div>
 
             <div class="menu-footer">
                 <div class="menu-footer-copy">
-                <p>&copy; 2026 Naomi Soubhia Doi. All rights reserved.</p>
+                    <p>&copy; 2026 Naomi Soubhia Doi. All rights reserved.</p>
                 </div>
             </div>
         </div>
     </div>
 
 
-    <header class="backgroundTop">
-
+    <header class="backgroundTop" id="top">
 
         <div class="headerContent">
             <div class="infos">
-                <h1 id="name">Naomi Soubhia Doi</h1>
-                <h2>Computer Programming</h2>
+                <h1 id="name" aria-label="Naomi Soubhia Doi">Naomi Soubhia Doi</h1>
+                <p class="tagline">Computer Programming Co-op Student</p>
             </div>
 
-            <img class="naomiTopImage" src="img/naomi.png" alt="">
+            <img class="naomiTopImage" src="img/naomi.png" alt="Portrait of Naomi Soubhia Doi">
             <div class="opacityDiv"><img class="naomiTopImage2" src="img/naomi2.JPG" alt=""></div>
-            <img class="goldDetail" src="img/gold.png" alt="">
+            <img class="goldDetail" src="img/gold.png" alt="" aria-hidden="true">
 
         </div>
     </header>
 
-    <main class="content">
+    <main class="content" id="main">
 
-        <div class="about">
+        <section class="about" id="about" aria-labelledby="about-title">
             <div class="pictureAboutDiv">
-                <img src="img/naomi3.jpeg" alt="" class="pictureAbout">
-                <img class="goldPaint" src="img/goldPaint.png" alt="">
+                <img src="img/naomi3.jpeg" alt="Photo of Naomi Soubhia Doi" class="pictureAbout">
+                <img class="goldPaint" src="img/goldPaint.png" alt="" aria-hidden="true">
             </div>
             <div class="textAbout">
-                <h3 class="title">About Me</h3>
-                <img class="lineAbout" src="img/line.png" alt="">
-                <p class="aboutParagraph">Lorem ipsum dolor sit amet consectetur adipisicing elit. Dicta soluta amet
-                    iste, sunt tenetur quisquam quia perspiciatis doloremque reiciendis fuga quae similique neque
-                    minima, quibusdam laborum rem excepturi repudiandae voluptas.
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Dicta soluta amet iste, sunt tenetur
-                    quisquam quia perspiciatis doloremque reiciendis fuga quae similique neque minima, quibusdam laborum
-                    rem excepturi repudiandae voluptas.
+                <h2 class="title" id="about-title">About Me</h2>
+                <img class="lineAbout" src="img/line.png" alt="" aria-hidden="true">
+                <!-- Draft written from your LinkedIn profile. Edit it so it sounds like you. -->
+                <p class="aboutParagraph">I'm a Computer Programming co-op student at Georgian College in Barrie,
+                    Ontario, with a background in IT support and information systems. I spent nearly five years at FIAP
+                    in S&atilde;o Paulo, growing from computer laboratory assistant to IT Support Analyst: resolving
+                    escalated tickets, managing user access and building Power BI dashboards to track service metrics.
+                    Today I'm building on that foundation with C#/.NET, SQL and Python, and putting it to work as a
+                    co-op student with the Ontario Public Service.
                 </p>
-                <button class="btn-100">
-                    <span>Connect</span>
-                </button>
+                <a class="btn-100" href="https://www.linkedin.com/in/naomisoubhia-doi" target="_blank"
+                    rel="noopener noreferrer">
+                    <span>LinkedIn</span>
+                </a>
             </div>
-        </div>
+        </section>
 
 
 
-        <section class="sticky">
+        <section class="sticky" id="education" aria-labelledby="education-title">
+            <h2 class="visually-hidden" id="education-title">Education</h2>
 
             <div class="bg-video">
-                <video autoplay muted loop playsinline id="main-bg-video" class="bg-video">
+                <video autoplay muted loop playsinline preload="auto" id="main-bg-video" class="bg-video"
+                    aria-hidden="true" tabindex="-1">
                     <source src="img/video1.mp4" type="video/mp4">
                 </video>
             </div>
 
-            <canvas class="outline-layer"></canvas>
+            <canvas class="outline-layer" aria-hidden="true"></canvas>
 
 
             <div class="cards">
 
-                <div class="card" data-video="img/video1.mp4">
+                <article class="card" data-video="img/video1.mp4">
                     <div class="card-img">
-                        <video autoplay muted loop playsinline disablepictureinpicture class="">
+                        <video autoplay muted loop playsinline disablepictureinpicture preload="metadata"
+                            aria-hidden="true" tabindex="-1">
                             <source src="img/video1.mp4" type="video/mp4">
                         </video>
-
                     </div>
                     <div class="card-title">
-                        <h3 class=>Computer Programming & Co-op program</h3>
-                        <p>Ontario College Diploma - Georgian College</p>
+                        <h3>Computer Programming &amp; Co-op</h3>
+                        <p>Ontario College Diploma &ndash; Georgian College</p>
                     </div>
-                </div>
+                </article>
 
-                <div class="card" data-video="img/video2.mp4">
-
+                <article class="card" data-video="img/video2.mp4">
                     <div class="card-img">
-                        <video autoplay muted loop disablepictureinpicture playsinline class="">
+                        <video autoplay muted loop playsinline disablepictureinpicture preload="metadata"
+                            aria-hidden="true" tabindex="-1">
                             <source src="img/video2.mp4" type="video/mp4">
                         </video>
-
                     </div>
                     <div class="card-title">
-                        <h3 class=>System Information</h3>
-                        <p>Bacharelor Degree - FIAP</p>
+                        <h3>Information Systems</h3>
+                        <p>Bachelor's Degree &ndash; FIAP</p>
                     </div>
-                </div>
+                </article>
 
-                <div class="card" data-video="img/video3.mp4">
-
+                <article class="card" data-video="img/video3.mp4">
                     <div class="card-img">
-                        <video autoplay muted loop disablepictureinpicture playsinline class="">
+                        <video autoplay muted loop playsinline disablepictureinpicture preload="metadata"
+                            aria-hidden="true" tabindex="-1">
                             <source src="img/video3.mp4" type="video/mp4">
                         </video>
-
                     </div>
                     <div class="card-title">
-                        <h3 class=>Fiap School</h3>
+                        <h3>FIAP</h3>
                         <p>Technical Diploma in Information Technology</p>
                     </div>
-                </div>
+                </article>
 
             </div>
-            <canvas class="fill-layer">
-
-            </canvas>
+            <canvas class="fill-layer" aria-hidden="true"></canvas>
 
         </section>
-        <section class="work">
-            <h3 class="title">Work Experience</h3>
-            <img class="lineWork" src="img/line.png" alt="">
 
+
+        <section class="work" id="work" aria-labelledby="work-title">
+            <h2 class="title" id="work-title">Work Experience</h2>
+            <img class="lineWork" src="img/line.png" alt="" aria-hidden="true">
             <div class="carousel">
-                <div class="block">Job 1</div>
-                <div class="block">Job 2</div>
-                <div class="block">Job 3</div>
-                <div class="block">Job 4</div>
+                <article class="block">
+                    <img class="workImage" src="img/ontario.png" alt="Ontario Public Service logo" loading="lazy" decoding="async">
+                    <h3>System Officer 2 &ndash; Co-op Student</h3>
+                    <p class="company">Ontario Public Service</p>
+                    <p><time datetime="2026-09">September 2026</time> &ndash; Present</p>
+                </article>
+
+
+                <article class="block">
+                    <img class="workImage" src="img/365ti.png" alt="365TI logo" loading="lazy" decoding="async">
+                    <h3>IT Support Analyst</h3>
+                    <p class="company">365TI</p>
+                    <p><time datetime="2025-01">January 2025</time> &ndash; <time datetime="2025-06">June 2025</time>
+                    </p>
+                </article>
+
+                 <article class="block">
+                    <img class="workImage" src="img/fiap.jpg" alt="FIAP logo" loading="lazy" decoding="async">
+                    <h3>IT Support Analyst</h3>
+                    <p class="company">FIAP</p>
+                    <p><time datetime="2023-02">February 2023</time> &ndash; <time datetime="2024-11">November 2024</time></p>
+                </article>
+
+                <article class="block">
+                    <img class="workImage" src="img/fiap.jpg" alt="FIAP logo" loading="lazy" decoding="async">
+                    <h3>IT Support Assistant</h3>
+                    <p class="company">FIAP</p>
+                    <p><time datetime="2021-09">September 2021</time> &ndash; <time datetime="2023-02">February 2023</time></p>
+                </article>
+
+                <article class="block">
+                    <img class="workImage" src="img/fiap.jpg" alt="FIAP logo" loading="lazy" decoding="async">
+                    <h3>Technical Support Assistant</h3>
+                    <p class="company">FIAP</p>
+                    <p><time datetime="2020-11">November 2020</time> &ndash; <time datetime="2021-09">September 2021</time></p>
+                </article>
+
+                <article class="block">
+                    <img class="workImage" src="img/fiap.jpg" alt="FIAP logo" loading="lazy" decoding="async">
+                    <h3>Computer Laboratory Assistant</h3>
+                    <p class="company">FIAP</p>
+                    <p><time datetime="2020-01">January 2020</time> &ndash; <time datetime="2020-11">November 2020</time></p>
+                </article>
+                
             </div>
         </section>
 
-        <section class="projects">
-            <p class="golden-menu " >test</p>
-        </section>
+<section class="projects" id="projects" aria-labelledby="projects-title">
+            <h2 class="title" id="projects-title">Projects</h2>
+            <img class="lineProjects" src="img/line.png" alt="" aria-hidden="true">
 
+            <!-- Add each project as a card here, for example:
+            <article class="project">
+                <h3>Project name</h3>
+                <p>One-line description, then the stack used.</p>
+                <a href="https://github.com/...">Code</a>
+                <a href="https://...">Live demo</a>
+            </article>
+            -->
+            <p class="projects-note">Selected projects are coming soon.</p>
+        </section>
 
     </main>
 
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/gsap.min.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/ScrollTrigger.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/SplitText.min.js"></script>
-    <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
-    <script src="js/script.js"></script>
+
 </body>
 
 </html>
