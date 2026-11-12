@@ -19,6 +19,7 @@
    ========================================================================== */
 
 
+
 /* 1. Design tokens
    ========================================================================== */
 
@@ -672,13 +673,13 @@ html.is-menu-open nav .nav-toggler {
 
 /* 12. Projects
    ========================================================================== */
-
 .projects {
-  display: flex;
-  flex-direction: column;
+  position: relative;
   width: 100%;
-  padding-top: 6rem;
+  padding: 6rem 0 5rem;
   background: var(--color-white);
+  overflow-x: hidden;
+
 }
 
 .projects .title {
@@ -687,30 +688,209 @@ html.is-menu-open nav .nav-toggler {
 }
 
 .lineProjects {
-  align-self: center;
+  display: block;
   width: 12rem;
   height: 0.2rem;
-  margin-top: 1rem;
-  margin-bottom: 20vh;
+  margin: 1rem auto 0;
 }
 
+.projects-intro {
+  max-width: 34rem;
+  margin: 1.75rem auto 0;
+  padding-inline: 1rem;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.projects-list {
+  margin-top: 14vh;
+  padding-inline: clamp(1rem, 4vw, 3rem);
+}
+
+/* The gap is the scroll distance between one card landing and the next. */
 .project {
+  margin-bottom: 14vh;
+}
+
+.project:last-child {
+  margin-bottom: 0;
+}
+
+
+/* Card: same gold border + black panel as the Education cards. */
+.project-inner {
+  --dim: 0; /* animated by script.js when a newer card slides over this one */
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 2rem;
+  max-width: 1100px;
+  min-height: min(68vh, 520px);
+  margin-inline: auto;
+  padding: 2.5rem;
+  overflow: hidden;
+  color: var(--color-white);
+  border-radius: 10px;
+  background: var(--gradient-gold);
+  background-size: 210%;
+  transition: background-position 1s;
+  will-change: transform;
+}
+
+.project-inner:hover {
+  background-position: right;
+}
+
+/* Solid (not translucent) so stacked cards never show through each other. */
+.project-inner::before {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: 8px;
+  background: #060606;
+}
+
+/* Darkens the card while the next one covers it. */
+.project-inner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  border-radius: 10px;
+  background: var(--color-black);
+  opacity: var(--dim);
+  pointer-events: none;
+}
+
+.project-inner > * {
+  position: relative;
+  z-index: 1;
+}
+
+
+/* Text column */
+.project-body {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-  width: 100%;
-  margin-bottom: 2rem;
-  padding-inline: 1rem;
-  overflow: hidden;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 1rem 0 1rem 1.5rem;
 }
 
-.project p {
+
+.project h3 {
+  margin-top: 0.5rem;
+  font-size: clamp(2rem, 3.6vw, 3.2rem);
+  line-height: 1.05;
+  letter-spacing: 1px;
+}
+
+.project-desc {
+  max-width: 44ch;
+  margin-top: 1rem;
+  font-size: 15px;
+  line-height: 24px;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  list-style: none;
+}
+
+.project-tags li {
+  padding: 0.4rem 0.9rem;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  border: 1px solid rgba(255, 210, 119, 0.45);
+  border-radius: 999px;
+}
+
+.project-links {
+  margin-top: 2rem;
+}
+
+/* Reuses the gold .btn-100 button from the About section. */
+.project-btn {
+  width: 170px;
+  margin: 0;
+}
+
+
+
+/* Art column: a triangle grid that fills in on scroll, like the Education
+   section. script.js draws the triangles into the <svg>. */
+.project-art {
+    position: relative;
+    align-self: stretch;
+    overflow: hidden;
+    border: 1px solid rgba(255, 210, 119, 0.25);
+    border-radius: 8px;
+    background: var(--color-black);
+}
+
+.project-art svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.project-art polygon {
+  fill: var(--color-gold);
+  fill-opacity: 0;
+  stroke: rgba(255, 210, 119, 0.28);
+  stroke-width: 0.6;
+  transition: fill-opacity 0.35s ease;
+}
+
+.project-art polygon.is-dark {
+  fill: var(--color-gold-dark);
+}
+
+.project-lang {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  z-index: 2;
+  padding: 0.4rem 0.9rem;
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  line-height: 1.1;
+  letter-spacing: 1px;
+  color: var(--color-white);
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.85);
+}
+
+
+/* Closing call to action */
+.projects-more {
+  padding: 14vh 1rem 0;
   text-align: center;
 }
 
-/* Scroll-driven reveal. Browsers without animation-timeline support (or users
-   who prefer reduced motion) simply see the elements in their final state. */
+.projects-more p {
+  text-align: center;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.projects-more .btn-100 {
+  width: 190px;
+  margin: 1.5rem auto 0;
+}
+
+
+/* Scroll-driven reveal for the title, line, intro and closing call to action.
+   Browsers without animation-timeline support (or users who prefer reduced
+   motion) simply see the elements in their final state. */
 @keyframes reveal-up {
   from {
     opacity: 0;
@@ -730,6 +910,44 @@ html.is-menu-open nav .nav-toggler {
       animation-timeline: view();
       animation-range: cover 0% cover 70%;
     }
+
+    .projects-intro,
+    .projects-more {
+      animation: reveal-up linear both;
+      animation-timeline: view();
+      animation-range: cover 5% cover 60%;
+    }
+  }
+}
+
+
+@media (max-width: 800px) {
+  .projects .title {
+    font-size: 3rem;
+  }
+
+  .projects-list {
+    margin-top: 8vh;
+  }
+
+  .project {
+    margin-bottom: 3rem;
+  }
+
+  .project-inner {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    min-height: 0;
+    padding: 1.5rem;
+  }
+
+  .project-art {
+    order: -1;
+    height: 180px;
+  }
+
+  .project-body {
+    padding: 0.5rem;
   }
 }
 

@@ -38,6 +38,13 @@
       videoFadeSeconds: 0.6,
     },
     work: { scrollMultiplier: 3 },
+    projects: {
+      stackTopPx: 96, // where the first card parks (clears the nav)
+      stackStepPx: 16, // how much of each card behind peeks out
+      backScale: 0.95, // size of a card once the next one covers it
+      backDim: 0.55, // how dark it gets
+      minPinWidth: 801, // below this width the cards just reveal, no stacking
+    },
   });
 
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -630,6 +637,174 @@ function applyProgress(progress, isVisible = false) {
 
 
   /* ======================================================================
+     6b. Projects
+     ====================================================================== */
+
+  const SVG_NS = "http://www.w3.org/2000/svg";
+
+  /** Small seeded random generator, so each card gets its own fixed pattern. */
+  function mulberry32(seed) {
+    let a = seed;
+    return () => {
+      a = (a + 0x6d2b79f5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  /**
+   * Draws the same triangle tiling as the Education section into an <svg>
+   * (viewBox 400x400). `setProgress(0..1)` fills a random subset in sequence.
+   */
+  function createProjectArt(svg, seed) {
+    const random = mulberry32(seed * 9973 + 17);
+    const half = 50;
+    const rows = 4;
+    const cols = 9;
+    const fillable = [];
+
+    for (let row = 0; row < rows; row += 1) {
+      for (let col = 0; col < cols; col += 1) {
+        const x = col * half;
+        const y = row * half * 2 + half;
+        const flipped = (row + col) % 2 !== 0;
+        const points = flipped
+          ? `${x},${y + half} ${x + half},${y - half} ${x - half},${y - half}`
+          : `${x},${y - half} ${x + half},${y + half} ${x - half},${y + half}`;
+
+        const polygon = document.createElementNS(SVG_NS, "polygon");
+        polygon.setAttribute("points", points);
+        svg.appendChild(polygon);
+
+        if (random() < 0.55) {
+          if (random() < 0.35) polygon.classList.add("is-dark");
+          fillable.push({ polygon, order: random() });
+        }
+      }
+    }
+
+    const spread = 0.3; // how long each triangle takes to fade in
+    function setProgress(progress) {
+      const p = progress * (1 + spread);
+      for (const { polygon, order } of fillable) {
+        polygon.style.fillOpacity = clamp((p - order) / spread, 0, 1).toFixed(2);
+      }
+    }
+
+    return { setProgress };
+  }
+
+  /**
+   * Project cards:
+   *  - desktop: each card parks near the top while the next slides over it,
+   *    shrinking and darkening slightly (a stacked-deck effect)
+   *  - every card: text rises in, triangles fill as it scrolls into view,
+   *    and the triangle panel drifts for a little parallax
+   */
+  function initProjects() {
+    const section = $(".projects");
+    const cards = $$(".project", section ?? document);
+    if (!section || cards.length === 0) return;
+
+    const cfg = CONFIG.projects;
+    const arts = cards.map((card, index) => {
+      const svg = $(".project-art svg", card);
+      return svg ? createProjectArt(svg, index + 1) : null;
+    });
+
+    // No motion: show every pattern finished and leave the cards in normal flow.
+    if (prefersReducedMotion) {
+      arts.forEach((art) => art?.setProgress(1));
+      return;
+    }
+
+    const last = cards.length - 1;
+    const topOf = (index) => cfg.stackTopPx + index * cfg.stackStepPx;
+
+    gsap.matchMedia().add(
+      {
+        desktop: `(min-width: ${cfg.minPinWidth}px)`,
+        mobile: `(max-width: ${cfg.minPinWidth - 1}px)`,
+      },
+      (context) => {
+        const { desktop } = context.conditions;
+
+        cards.forEach((card, index) => {
+          const inner = $(".project-inner", card);
+          const svg = $(".project-art svg", card);
+          const art = arts[index];
+
+          // Text rises in once, when the card comes into view.
+          gsap.from($$("[data-reveal]", card), {
+            y: 36,
+            opacity: 0,
+            duration: 0.8,
+            ease: "power3.out",
+            stagger: 0.09,
+            scrollTrigger: { trigger: card, start: "top 78%", toggleActions: "play none none none" },
+          });
+
+          // Triangles fill while the card scrolls in.
+          if (art) {
+            ScrollTrigger.create({
+              trigger: card,
+              start: "top 85%",
+              end: "top 35%",
+              onUpdate: (self) => art.setProgress(self.progress),
+              onRefresh: (self) => art.setProgress(self.progress),
+            });
+          }
+
+          // Slow parallax drift on the triangle panel.
+          if (svg) {
+            gsap.fromTo(
+              svg,
+              { yPercent: -5, scale: 1.12 },
+              {
+                yPercent: 5,
+                ease: "none",
+                scrollTrigger: { trigger: card, start: "top bottom", end: "top top", scrub: true },
+              }
+            );
+          }
+
+          // Stacked-deck effect (desktop only; the last card just stays on top).
+          if (desktop && index < last) {
+            ScrollTrigger.create({
+              trigger: card,
+              start: `top ${topOf(index)}px`,
+              endTrigger: cards[last],
+              end: `top ${topOf(last)}px`,
+              pin: true,
+              pinSpacing: false,
+              invalidateOnRefresh: true,
+            });
+
+            gsap.fromTo(
+              inner,
+              { scale: 1, "--dim": 0, transformOrigin: "50% 0%" },
+              {
+                scale: cfg.backScale,
+                "--dim": cfg.backDim,
+                ease: "none",
+                scrollTrigger: {
+                  trigger: cards[index + 1],
+                  start: "top bottom",
+                  end: `top ${topOf(index + 1)}px`,
+                  scrub: true,
+                  invalidateOnRefresh: true,
+                },
+              }
+            );
+          }
+        });
+      }
+    );
+  }
+
+
+  /* ======================================================================
      7. Navigation colour theme
      ====================================================================== */
 
@@ -646,7 +821,7 @@ function applyProgress(progress, isVisible = false) {
     function isLightBehind(element) {
       if (element.closest(".about")) return !element.closest(".textAbout"); // text column is black
       if (element.closest(".sticky")) return isEducationFilled();
-      return Boolean(element.closest(".projects"));
+      return Boolean(element.closest(".projects")) && !element.closest(".project-inner"); // project cards are black
     }
 
     function update() {
@@ -691,6 +866,7 @@ function applyProgress(progress, isVisible = false) {
     initAboutReveal();
     const education = initEducation(); // pinned sections must be created in page order
     initWorkCarousel();
+    initProjects(); // after the work carousel: its pins must come later in page order
 
     initNavTheme({ isEducationFilled: education ? education.isFilled : () => false });
   }
