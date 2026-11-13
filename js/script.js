@@ -126,6 +126,69 @@
     else window.addEventListener("load", schedule, { once: true });
   }
 
+// Mouse parallax for Naomi's images
+const mouseImages = [
+    {
+        element: document.querySelector(".naomiTopImage"),
+        strength: 18
+    },
+    {
+        element: document.querySelector(".naomiTopImage2"),
+        strength: 32
+    }
+].filter(item => item.element);
+
+if (
+    window.matchMedia("(hover: hover) and (pointer: fine)").matches &&
+    !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+) {
+    let mouseX = 0;
+    let mouseY = 0;
+
+    let currentX = 0;
+    let currentY = 0;
+
+    let animationFrame = null;
+
+    function animateImages() {
+        currentX += (mouseX - currentX) * 0.08;
+        currentY += (mouseY - currentY) * 0.08;
+
+        mouseImages.forEach(({ element, strength }) => {
+            const x = currentX * strength;
+            const y = currentY * strength;
+
+            element.style.translate = `${x}px ${y}px`;
+        });
+
+        if (
+            Math.abs(mouseX - currentX) > 0.01 ||
+            Math.abs(mouseY - currentY) > 0.01
+        ) {
+            animationFrame = requestAnimationFrame(animateImages);
+        } else {
+            animationFrame = null;
+        }
+    }
+
+    window.addEventListener("pointermove", (event) => {
+        mouseX = (event.clientX / window.innerWidth - 0.5) * 2;
+        mouseY = (event.clientY / window.innerHeight - 0.5) * 2;
+
+        if (!animationFrame) {
+            animationFrame = requestAnimationFrame(animateImages);
+        }
+    });
+
+    window.addEventListener("pointerleave", () => {
+        mouseX = 0;
+        mouseY = 0;
+
+        if (!animationFrame) {
+            animationFrame = requestAnimationFrame(animateImages);
+        }
+    });
+}
 
   /* ======================================================================
      3. Smooth scroll, menu and anchor links
@@ -640,6 +703,7 @@ function applyProgress(progress, isVisible = false) {
      6b. Projects
      ====================================================================== */
 
+     
   const SVG_NS = "http://www.w3.org/2000/svg";
 
   /** Small seeded random generator, so each card gets its own fixed pattern. */
@@ -858,6 +922,8 @@ function applyProgress(progress, isVisible = false) {
     gsap.registerPlugin(ScrollTrigger);
     ScrollTrigger.config({ ignoreMobileResize: true });
 
+
+    
     const lenis = initSmoothScroll();
     const menu = initMenu({ lenis });
     initAnchorLinks({ lenis, menu });

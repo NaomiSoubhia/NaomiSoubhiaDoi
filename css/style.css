@@ -66,8 +66,8 @@
 
 html,
 body {
-  width: 100%;
-  overflow-x: hidden;
+    width: 100%;
+    overflow-x: clip;
 }
 
 html.is-menu-open {
@@ -356,17 +356,24 @@ html.is-menu-open nav .nav-toggler {
   top: 20%;
   right: 18%;
   z-index: 2;
-  width: min(26vw, 500px);
+  width: min(27vw, 600px);
   filter: grayscale(100%) contrast(150%);
 }
 
 .naomiTopImage2 {
-  right: 5%;
+  right: 7%;
   bottom: 0;
+  top:60%; 
   z-index: 2;
   width: min(15vw, 280px);
   filter: grayscale(100%) contrast(130%);
 }
+
+.naomiTopImage,
+.naomiTopImage2 {
+    will-change: translate;
+}
+
 
 .goldDetail {
   top: 15%;
@@ -460,11 +467,11 @@ html.is-menu-open nav .nav-toggler {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 140px;
+  width: 120px;
   height: 40px;
-  margin: 2rem;
+  margin: 1.5rem;
   overflow: hidden;
-  font-size: 14px;
+  font-size: 12px;
   letter-spacing: 0.6px;
   border-radius: 10px;
   background: var(--gradient-gold);
@@ -478,7 +485,7 @@ html.is-menu-open nav .nav-toggler {
 .btn-100::before {
   content: "";
   position: absolute;
-  inset: 3px;
+  inset: 2px;
   border-radius: 8px;
   background: var(--color-black);
 }
@@ -549,7 +556,7 @@ html.is-menu-open nav .nav-toggler {
   align-items: center;
   gap: 1rem;
   width: 9%;
-  height: 70%;
+  height: 60%;
   padding: 1em;
   overflow: hidden;
   color: var(--color-white);
@@ -674,12 +681,11 @@ html.is-menu-open nav .nav-toggler {
 /* 12. Projects
    ========================================================================== */
 .projects {
-  position: relative;
-  width: 100%;
-  padding: 6rem 0 5rem;
-  background: var(--color-white);
-  overflow-x: hidden;
-
+    position: relative;
+    width: 100%;
+    padding: 6rem 0 5rem;
+    background: var(--color-white);
+    overflow-x: clip;
 }
 
 .projects .title {
@@ -694,10 +700,11 @@ html.is-menu-open nav .nav-toggler {
   margin: 1rem auto 0;
 }
 
+
+
 .projects-intro {
   max-width: 34rem;
-  margin: 1.75rem auto 0;
-  padding-inline: 1rem;
+  margin: 1rem auto 0;
   text-align: center;
   color: rgba(0, 0, 0, 0.6);
 }
@@ -888,36 +895,62 @@ html.is-menu-open nav .nav-toggler {
 }
 
 
-/* Scroll-driven reveal for the title, line, intro and closing call to action.
-   Browsers without animation-timeline support (or users who prefer reduced
-   motion) simply see the elements in their final state. */
+/* ==========================================================================
+   Projects – Scroll-driven reveal
+   ========================================================================== */
+
 @keyframes reveal-up {
-  from {
-    opacity: 0;
-    transform: translateY(100px) scale(0.8);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+    from {
+        opacity: 0;
+        transform: translate3d(0, 120px, 0) scale(0.65);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+}
+
+@keyframes reveal-line {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 70px, 0) scaleX(0.1);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scaleX(1);
+    }
 }
 
 @supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .projects .title,
-    .lineProjects {
-      animation: reveal-up linear both;
-      animation-timeline: view();
-      animation-range: cover 0% cover 70%;
-    }
 
-    .projects-intro,
-    .projects-more {
-      animation: reveal-up linear both;
-      animation-timeline: view();
-      animation-range: cover 5% cover 60%;
+    @media (prefers-reduced-motion: no-preference) {
+
+        .projects .title,
+        .projects-intro,
+        .projects-more {
+            animation-name: reveal-up;
+            animation-duration: 1s;
+            animation-timing-function: linear;
+            animation-fill-mode: both;
+
+            animation-timeline: view(block);
+            animation-range: entry 0% cover 35%;
+        }
+
+        .lineProjects {
+            transform-origin: center center;
+
+            animation-name: reveal-line;
+            animation-duration: 1s;
+            animation-timing-function: linear;
+            animation-fill-mode: both;
+
+            animation-timeline: view(block);
+            animation-range: entry 0% cover 35%;
+        }
     }
-  }
 }
 
 
@@ -976,9 +1009,249 @@ html.lenis body {
   pointer-events: none;
 }
 
+/* Footer */
+ 
+.footer {
+  position: relative;
+  z-index: var(--z-content);
+  padding: 6rem clamp(1rem, 4vw, 3rem) 1.5rem;
+  color: var(--color-white);
+  background: var(--color-black);
+}
+ 
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 1rem;
+  max-width: 1100px;
+  margin-inline: auto;
+}
+ 
+.footer-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+}
+ 
+ 
+/* Photo: grayscale until hovered, like the hero portrait. */
+.footer-photo {
+  grid-row: span 2;
+  min-height: 420px;
+}
+ 
+.footer-photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(100%) contrast(110%);
+  transition: filter 0.6s ease, transform 0.8s ease;
+}
+ 
+.footer-photo:hover img {
+  filter: grayscale(0%) contrast(110%);
+  transform: scale(1.04);
+}
+ 
+ 
+/* Text card: same gold border + black panel as the cards above. */
+.footer-gold {
+  background: var(--gradient-gold);
+  background-size: 210%;
+  transition: background-position 1s;
+}
+ 
+.footer-gold:hover {
+  background-position: right;
+}
+ 
+.footer-gold::before {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: 8px;
+  background: #060606;
+}
+ 
+.footer-card-inner {
+  position: relative;
+  padding: 2rem 1.75rem 1.5rem;
+}
+ 
+.footer-title {
+  font-size: clamp(1.9rem, 2.8vw, 2.6rem);
+  line-height: 1.05;
+  letter-spacing: 0.5px;
+}
+ 
+.footer-line {
+  display: block;
+  width: 6rem;
+  height: 0.2rem;
+  margin: 1rem 0;
+}
+ 
+.footer-card-inner p {
+  color: rgba(255, 255, 255, 0.72);
+}
+ 
+.footer-btn {
+  width: 140px;
+  margin: 1.5rem 0 0;
+}
+ 
+ 
+/* Links */
+.footer-links {
+  grid-row: span 2;
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 210, 119, 0.3);
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.5)),
+    url("../img/marble.png") center / cover no-repeat;
+}
+ 
+.footer-links ul {
+  width: 100%;
+  list-style: none;
+}
+ 
+.footer-links li + li {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+ 
+.footer-links a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  transition: color 0.3s ease, padding-left 0.3s ease;
+}
+ 
+.footer-links a::after {
+  content: "\2197"; /* ↗ */
+  opacity: 0.4;
+  transition: opacity 0.3s ease;
+}
+ 
+.footer-links a:hover,
+.footer-links a:focus-visible {
+  padding-left: 0.5rem;
+  color: var(--color-gold);
+}
+ 
+.footer-links a:hover::after,
+.footer-links a:focus-visible::after {
+  opacity: 1;
+}
+ 
+ 
+/* Resume card */
+.footer-resume {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 1.25rem;
+  padding: 1.75rem;
+  border: 1px solid rgba(255, 210, 119, 0.3);
+}
+ 
+.footer-resume-text {
+  font-family: var(--font-serif);
+  font-size: clamp(1.6rem, 2.2vw, 2rem);
+  line-height: 1.1;
+  letter-spacing: 0.5px;
+}
+ 
+.footer-resume-btn {
+  width: 200px;
+  margin: 0;
+}
+ 
+ 
+/* Bottom bar */
+.footer-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  max-width: 1100px;
+  margin: 2.5rem auto 0;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+ 
+.footer-bar p {
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+ 
+.footer-top {
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  transition: color 0.3s ease;
+}
+ 
+.footer-top:hover,
+.footer-top:focus-visible {
+  color: var(--color-gold);
+}
+ 
+ 
+/* Cards rise in as the footer scrolls into view  */
+@keyframes footer-in {
+  from { opacity: 0; transform: translate3d(0, 60px, 0) scale(0.94); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+ 
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .footer-card {
+      animation: footer-in 1s linear both;
+      animation-timeline: view(block);
+      animation-range: entry 0% entry 90%;
+    }
+  }
+}
+ 
+ 
+/* Footer responsive */
+@media (max-width: 800px) {
+  .footer { padding-top: 4rem; }
+ 
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+ 
+  .footer-gold {
+    grid-column: 1 / -1;
+    order: -1;
+  }
+ 
+  .footer-photo,
+  .footer-links { grid-row: auto; }
+ 
+  .footer-photo { min-height: 260px; }
+ 
+  .footer-resume { grid-column: 1 / -1; }
+ 
+  .footer-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+ 
+@media (max-width: 480px) {
+  .footer-grid { grid-template-columns: 1fr; }
+}
 
-/* 14. Responsive
-   ========================================================================== */
+/* 14. Responsive */
 
 @media (max-width: 1000px) {
   .menu-secondary-links {
