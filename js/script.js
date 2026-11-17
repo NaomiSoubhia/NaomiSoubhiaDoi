@@ -665,38 +665,47 @@ function applyProgress(progress, isVisible = false) {
      ====================================================================== */
 
   function initWorkCarousel() {
-    const section = $(".work");
-    const carousel = $(".carousel");
-    const blocks = $$(".block", carousel ?? document);
-    if (!section || !carousel || blocks.length === 0) return;
+  const section = $(".work");
+  const carousel = $(".carousel");
+  const title = section && $(".title", section);
+  const blocks = $$(".block", carousel ?? document);
+  if (!section || !carousel || blocks.length === 0) return;
 
-    // Measured lazily so values stay correct after a resize/refresh.
-    const measure = () => {
-      const gap = parseFloat(getComputedStyle(carousel).gap) || 0;
-      const blockHeight = blocks[0].offsetHeight;
-      return {
-        centerOffset: (window.innerHeight - blockHeight) / 2,
-        travel: (blocks.length - 1) * (blockHeight + gap),
-      };
-    };
+  const isStacked = () => window.matchMedia("(max-width: 800px)").matches;
 
-    gsap.fromTo(
-      carousel,
-      { y: () => measure().centerOffset },
-      {
-        y: () => measure().centerOffset - measure().travel,
-        ease: "none",
-        scrollTrigger: {
-          trigger: section,
-          start: "top top",
-          end: () => `+=${measure().travel * CONFIG.work.scrollMultiplier}`,
-          pin: true,
-          scrub: true,
-          invalidateOnRefresh: true,
-        },
-      }
-    );
-  }
+  // Measured lazily so values stay correct after a resize/refresh.
+  const measure = () => {
+    if (isStacked()) {
+      const top = carousel.offsetTop; // layout position, ignores the GSAP transform
+      const startY = (title ? title.offsetHeight : 0) + 16 - top; // first card just under the title
+      const endY = window.innerHeight - 24 - top - carousel.offsetHeight; // last card ends near the bottom
+      return { startY, endY, travel: Math.max(0, startY - endY) };
+    }
+
+    const gap = parseFloat(getComputedStyle(carousel).gap) || 0;
+    const blockHeight = blocks[0].offsetHeight;
+    const centerOffset = (window.innerHeight - blockHeight) / 2;
+    const travel = (blocks.length - 1) * (blockHeight + gap);
+    return { startY: centerOffset, endY: centerOffset - travel, travel };
+  };
+
+  gsap.fromTo(
+    carousel,
+    { y: () => measure().startY },
+    {
+      y: () => measure().endY,
+      ease: "none",
+      scrollTrigger: {
+        trigger: section,
+        start: "top top",
+        end: () => `+=${measure().travel * CONFIG.work.scrollMultiplier}`,
+        pin: true,
+        scrub: true,
+        invalidateOnRefresh: true,
+      },
+    }
+  );
+}
 
 
   /* ======================================================================
