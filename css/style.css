@@ -933,35 +933,7 @@ html.is-menu-open nav .nav-toggler {
 }
 
 
-@media (max-width: 800px) {
-  .projects .title {
-    font-size: 3rem;
-  }
 
-  .projects-list {
-    margin-top: 8vh;
-  }
-
-  .project {
-    margin-bottom: 3rem;
-  }
-
-  .project-inner {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    min-height: 0;
-    padding: 1.5rem;
-  }
-
-  .project-art {
-    order: -1;
-    height: 180px;
-  }
-
-  .project-body {
-    padding: 0.5rem;
-  }
-}
 
 
 /* 13. Vendor: Lenis (smooth scroll) – from the Lenis docs
@@ -1202,29 +1174,6 @@ html.lenis body {
 }
  
  
-/* Footer responsive */
-@media (max-width: 800px) {
-  .footer { padding-top: 4rem; }
- 
-  .footer-grid { grid-template-columns: 1fr 1fr; }
- 
-  .footer-gold {
-    grid-column: 1 / -1;
-    order: -1;
-  }
- 
-  .footer-photo,
-  .footer-links { grid-row: auto; }
- 
-  .footer-photo { min-height: 260px; }
- 
-  .footer-resume { grid-column: 1 / -1; }
- 
-  .footer-bar {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
  
 @media (max-width: 480px) {
   .footer-grid { grid-template-columns: 1fr; }
@@ -1349,9 +1298,9 @@ nav {
 
 /* Education cards: 9% of a 300%-wide track is ~27vw, which is too narrow
    on small laptops. */
-@media (min-width: 1001px) and (max-width: 1280px) {
+@media  (min-width: 1280px) {
   .card {
-    width: 8%;
+     width: 8%;
   }
 }
 
@@ -1359,7 +1308,7 @@ nav {
 /* 3. Tablets (<= 1000px)
    ========================================================================== */
 
-@media (max-width: 1000px) {
+@media (max-width: 1200px) {
   .infos {
     left: 5vw;
     width: 56%;
@@ -1395,12 +1344,17 @@ nav {
   }
 
   .card {
-    width: 20%;
-    max-width: 200px;
+    width: clamp(600px, 50vw, 700px);
+    height: clamp(700px, 30vw, 800px);
+    
   }
 
   .card-title h3 {
-    font-size: 1.3rem;
+    font-size: 2rem;
+  }
+
+  .card-title p {
+    font-size: 1.2rem;
   }
 
   .work .title {
@@ -1408,12 +1362,21 @@ nav {
     font-size: 3rem;
   }
 
+  
+
   .carousel {
-    width: 58%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 60%;
+  margin-top: 60vh;
+  overflow: hidden;
+  margin-bottom: 0px;
   }
 
   .block {
-    width: 90%;
+    width: 90%; 
+    height: 20vh;
   }
 
   .project-inner {
@@ -1435,10 +1398,9 @@ nav {
 
 @media (max-width: 800px) {
 
-  /* Hero: portrait centred, name card pinned to the bottom. */
+  /* Hero */
   .infos {
     top: auto;
-    bottom: 8vh;
     bottom: 8svh;
     left: 1rem;
     right: 1rem;
@@ -1475,7 +1437,7 @@ nav {
     max-width: 420px;
   }
 
-  /* About: stack photo above text. */
+  /* About */
   .about {
     grid-template-columns: 1fr;
   }
@@ -1516,44 +1478,68 @@ nav {
     margin-right: 1.5rem;
   }
 
-  /* Education: pinned cards are wider on small screens. */
+  /* Education */
   .card {
-    width: 26%;
-    height: 66%;
+    width: clamp(500px, 40vw, 600px);
+    height: clamp(600px, 50vh, 700px);
+    min-height: 50vh;
   }
 
   .card-title h3 {
     padding: 0.5rem 0;
-    font-size: 1.15rem;
+    font-size: 2rem;
   }
 
-  /* Work: title stays on the left, cards on the right (the carousel
-     offset and scroll animation are driven by script.js). */
+  .card-title p {
+    font-size: 1.2rem;
+  }
+
+  /* Work */
   .work .title {
-    flex: 1 1 auto;
-    min-width: 0;
-    margin-left: 1rem;
-    font-size: 1.9rem;
-    line-height: 1.05;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    margin: 0;
+    padding: 5rem 1rem 1.25rem;
+    font-size: 2.4rem;
+    text-align: center;
+    background: var(--color-black);
+    box-shadow: 0 1rem 1rem 0.25rem var(--color-black);
+  }
+
+  .work .title::after {
+    content: "";
+    display: block;
+    width: 6rem;
+    height: 0.2rem;
+    margin: 0.75rem auto 0;
+    background: var(--gradient-gold);
   }
 
   .lineWork {
-    width: 4rem;
-    margin-left: 0;
-    margin-bottom: 1.5rem;
+    display: none;
   }
 
   .carousel {
-    flex: 0 0 60%;
-    width: 60%;
+    --block-h: clamp(300px, 50vh, 500px);
+
+    flex: 0 0 100%;
+    width: 100%;
+    align-items: center;
     gap: 1rem;
+
+    margin-top: calc(6 * var(--block-h) - 140vh);
+    margin-bottom: 6rem;
   }
 
   .block {
-    width: 92%;
-    height: auto;
-    min-height: 34vh;
+    width: min(90%, 500px);
+    height: var(--block-h)-20vh;
     padding: 1rem 0.5rem 1.25rem;
+    overflow: hidden;
+    text-align: center;
   }
 
   .workImage {
@@ -1567,13 +1553,41 @@ nav {
     line-height: 1.1;
   }
 
-  /* Projects: base 800px rules live in style.css; refine here. */
+  /* Projects */
   .projects {
     padding: 4rem 0 3rem;
   }
 
+  .projects-title {
+    font-size: 3rem;
+  }
+
   .projects-intro {
     padding-inline: 1.25rem;
+  }
+
+  .projects-list {
+    margin-top: 8vh;
+  }
+
+  .project {
+    margin-bottom: 3rem;
+  }
+
+  .project-inner {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    min-height: 0;
+    padding: 1.5rem;
+  }
+
+  .project-art {
+    order: -1;
+    height: 180px;
+  }
+
+  .project-body {
+    padding: 0.5rem;
   }
 
   .project-desc {
@@ -1595,6 +1609,38 @@ nav {
 
   .menu-footer {
     padding: 1rem 1.25rem;
+  }
+
+  /* Footer */
+  .footer {
+    padding-top: 4rem;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .footer-gold {
+    grid-column: 1 / -1;
+    order: -1;
+  }
+
+  .footer-photo,
+  .footer-links {
+    grid-row: auto;
+  }
+
+  .footer-photo {
+    min-height: 260px;
+  }
+
+  .footer-resume {
+    grid-column: 1 / -1;
+  }
+
+  .footer-bar {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 
@@ -1642,7 +1688,8 @@ nav {
   }
 
   .card {
-    width: 27%;
+    width: clamp(280px, 20%, 400px);
+    height: 40%;
   }
 
   .card-title h3 {
@@ -1659,10 +1706,7 @@ nav {
     margin-left: 0.75rem;
   }
 
-  .carousel {
-    flex-basis: 62%;
-    width: 62%;
-  }
+
 
   .block {
     width: 94%;
@@ -1804,7 +1848,8 @@ nav {
 
   .card {
     height: 70%;
-    width: 28%;
+    width: 48%;
+    min-width: 200px;
     padding: 0.75em;
   }
 
@@ -1852,77 +1897,12 @@ nav {
 }
 
 
-/* Work: title pinned to the top on small screens.
-   The section stays a row flexbox so the GSAP carousel maths still works. */
-@media (max-width: 800px) {
 
-  
-  .work .title {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 2;
-    margin: 0;
-    padding: 5rem 1rem 1.25rem;
-    font-size: 2.4rem;
-    text-align: center;
-    background: var(--color-black);
-    box-shadow: 0 1rem 1rem 0.25rem var(--color-black); /* soft fade under the title */
-  }
-
-  .lineWork {
-    display: none;
-  }
-
-  .work .title::after {
-    content: "";
-    display: block;
-    width: 6rem;
-    height: 0.2rem;
-    margin: 0.75rem auto 0;
-    background: var(--gradient-gold);
-  }
-
-  /* Full-width column of centred cards. margin-top: 170vh is inherited. */
-  .carousel {
-  --block-h: max(210px, 34vh);   /* keep in sync with .block height */
-  flex: 0 0 100%;
-  width: 100%;
-  align-items: center;
-  gap: 1rem;
-  /* 6 = number of work blocks; 5 = number of gaps between them.
-     This centres the first card instead of the fixed 170vh. */
-  margin-top: calc(6 * var(--block-h) + 5rem - 170vh);
-  margin-bottom: 0;
-}
-
-
-  /* Every block must have the SAME fixed height: script.js measures only
-     the first one to work out the scroll distance. */
-  .block {
-    width: min(80%, 420px);
-    height: max(200px, 20vh);
-    min-height: 0;
-    padding: 0.75rem 0.5rem;
-    overflow: hidden;
-  }
-
-  .workImage {
-    width: 20%;
-    margin-top: 0.5rem;
-  }
-
-  .block h3 {
-    margin-top: 0.5rem;
-    font-size: 1.25rem;
-    line-height: 1.1;
-  }
-}
 
 @media (max-width: 480px) {
   .work .title {
     font-size: 2rem;
     padding-top: 5rem;
   }
+  
 }

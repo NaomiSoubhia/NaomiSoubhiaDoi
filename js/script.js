@@ -1,18 +1,3 @@
-/**
- * Portfolio – Naomi Soubhia Doi
- *
- * Requires (loaded with `defer` before this file): GSAP, ScrollTrigger, Lenis.
- *
- * Structure
- *   1. Config and helpers
- *   2. Intro (loader + typed name)
- *   3. Smooth scroll, menu and anchor links
- *   4. Hero and About effects
- *   5. Education section (triangle grid, card slider, video crossfade)
- *   6. Work carousel
- *   7. Navigation colour theme
- *   8. Bootstrap
- */
 (() => {
   "use strict";
 
@@ -84,7 +69,7 @@
   }
 
 
-  /* ======================================================================
+  /*
      2. Intro: loader + typed name (no library dependencies)
      ====================================================================== */
 
@@ -684,7 +669,7 @@ function applyProgress(progress, isVisible = false) {
 
     const gap = parseFloat(getComputedStyle(carousel).gap) || 0;
     const blockHeight = blocks[0].offsetHeight;
-    const centerOffset = (window.innerHeight - blockHeight) / 2;
+    const centerOffset = (window.innerHeight - blockHeight) / 3;
     const travel = (blocks.length - 1) * (blockHeight + gap);
     return { startY: centerOffset, endY: centerOffset - travel, travel };
   };
