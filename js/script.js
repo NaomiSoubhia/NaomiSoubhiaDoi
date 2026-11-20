@@ -111,22 +111,22 @@
     else window.addEventListener("load", schedule, { once: true });
   }
 
-// Mouse parallax for Naomi's images
-const mouseImages = [
+  // Mouse parallax for Naomi's images
+  const mouseImages = [
     {
-        element: document.querySelector(".naomiTopImage"),
-        strength: 18
+      element: document.querySelector(".naomiTopImage"),
+      strength: 18
     },
     {
-        element: document.querySelector(".naomiTopImage2"),
-        strength: 32
+      element: document.querySelector(".naomiTopImage2"),
+      strength: 32
     }
-].filter(item => item.element);
+  ].filter(item => item.element);
 
-if (
+  if (
     window.matchMedia("(hover: hover) and (pointer: fine)").matches &&
     !window.matchMedia("(prefers-reduced-motion: reduce)").matches
-) {
+  ) {
     let mouseX = 0;
     let mouseY = 0;
 
@@ -136,44 +136,44 @@ if (
     let animationFrame = null;
 
     function animateImages() {
-        currentX += (mouseX - currentX) * 0.08;
-        currentY += (mouseY - currentY) * 0.08;
+      currentX += (mouseX - currentX) * 0.08;
+      currentY += (mouseY - currentY) * 0.08;
 
-        mouseImages.forEach(({ element, strength }) => {
-            const x = currentX * strength;
-            const y = currentY * strength;
+      mouseImages.forEach(({ element, strength }) => {
+        const x = currentX * strength;
+        const y = currentY * strength;
 
-            element.style.translate = `${x}px ${y}px`;
-        });
+        element.style.translate = `${x}px ${y}px`;
+      });
 
-        if (
-            Math.abs(mouseX - currentX) > 0.01 ||
-            Math.abs(mouseY - currentY) > 0.01
-        ) {
-            animationFrame = requestAnimationFrame(animateImages);
-        } else {
-            animationFrame = null;
-        }
+      if (
+        Math.abs(mouseX - currentX) > 0.01 ||
+        Math.abs(mouseY - currentY) > 0.01
+      ) {
+        animationFrame = requestAnimationFrame(animateImages);
+      } else {
+        animationFrame = null;
+      }
     }
 
     window.addEventListener("pointermove", (event) => {
-        mouseX = (event.clientX / window.innerWidth - 0.5) * 2;
-        mouseY = (event.clientY / window.innerHeight - 0.5) * 2;
+      mouseX = (event.clientX / window.innerWidth - 0.5) * 2;
+      mouseY = (event.clientY / window.innerHeight - 0.5) * 2;
 
-        if (!animationFrame) {
-            animationFrame = requestAnimationFrame(animateImages);
-        }
+      if (!animationFrame) {
+        animationFrame = requestAnimationFrame(animateImages);
+      }
     });
 
     window.addEventListener("pointerleave", () => {
-        mouseX = 0;
-        mouseY = 0;
+      mouseX = 0;
+      mouseY = 0;
 
-        if (!animationFrame) {
-            animationFrame = requestAnimationFrame(animateImages);
-        }
+      if (!animationFrame) {
+        animationFrame = requestAnimationFrame(animateImages);
+      }
     });
-}
+  }
 
   /* ======================================================================
      3. Smooth scroll, menu and anchor links
@@ -363,7 +363,12 @@ if (
   function createTriangleGrid(outlineCanvas, fillCanvas, cfg) {
     const outlineCtx = outlineCanvas.getContext("2d");
     const fillCtx = fillCanvas.getContext("2d");
-    const half = cfg.triangleSize / 2;
+const triangleSize =
+  window.innerWidth <= 800
+    ? 120
+    : 250;
+
+    const half = triangleSize / 2;
     const MIN_VISIBLE_SCALE = 0.01;
     const SOLID_SCALE = 0.99;
 
@@ -385,14 +390,14 @@ if (
     function buildTriangles() {
       const stepX = half;
       const cols = Math.ceil(width / stepX) + 4;
-      const rows = Math.ceil(height / cfg.triangleSize) + 1;
+      const rows = Math.ceil(height / triangleSize) + 1;
       const list = [];
 
       for (let row = 0; row < rows; row += 1) {
         for (let col = 0; col < cols; col += 1) {
           list.push({
             x: col * stepX + half,
-            y: row * cfg.triangleSize + half,
+            y: row * triangleSize + half,
             flipped: (row + col) % 2 !== 0,
             order: 0,
             scale: 0,
@@ -539,9 +544,17 @@ if (
     let currentSrc = sourceOf(primary);
     let requestId = 0;
 
-    function show(src) {
-      if (!src || src === currentSrc) return;
-      currentSrc = src;
+function show(src) {
+  if (!src) return;
+
+  const activeSrc =
+    active.currentSrc ||
+    active.src ||
+    sourceOf(active);
+
+  if (activeSrc.includes(src)) return;
+
+  currentSrc = src;
 
       const incoming = idle;
       const outgoing = active;
@@ -601,23 +614,23 @@ if (
       return closest;
     }
 
-function applyProgress(progress, isVisible = false) {
-  const cardsProgress = clamp(progress / cfg.cardsTravelEnd, 0, 1);
+    function applyProgress(progress, isVisible = false) {
+      const cardsProgress = clamp(progress / cfg.cardsTravelEnd, 0, 1);
 
-  setCardsX(-cardsProgress * window.innerWidth * 2);
+      setCardsX(-cardsProgress * window.innerWidth * 2);
 
-  // Keep the grid visible after the scroll animation finishes.
-  // Hide it only when scrolling back before the sticky section.
-  const shouldShowGrid = isVisible || progress >= 1;
+      // Keep the grid visible after the scroll animation finishes.
+      // Hide it only when scrolling back before the sticky section.
+      const shouldShowGrid = isVisible || progress >= 1;
 
-  grid.update(
-    progress,
-    -progress * cfg.canvasDriftPx,
-    shouldShowGrid
-  );
+      grid.update(
+        progress,
+        -progress * cfg.canvasDriftPx,
+        shouldShowGrid
+      );
 
-  videos?.show(getCenteredCard()?.dataset.video);
-}
+      videos?.show(getCenteredCard()?.dataset.video);
+    }
 
     const trigger = ScrollTrigger.create({
       trigger: section,
@@ -650,54 +663,59 @@ function applyProgress(progress, isVisible = false) {
      ====================================================================== */
 
   function initWorkCarousel() {
-  const section = $(".work");
-  const carousel = $(".carousel");
-  const title = section && $(".title", section);
-  const blocks = $$(".block", carousel ?? document);
-  if (!section || !carousel || blocks.length === 0) return;
+    const section = $(".work");
+    const carousel = $(".carousel");
+    const title = section && $(".title", section);
+    const blocks = $$(".block", carousel ?? document);
+    if (!section || !carousel || blocks.length === 0) return;
 
-  const isStacked = () => window.matchMedia("(max-width: 800px)").matches;
+    const isStacked = () => window.matchMedia("(max-width: 800px)").matches;
 
-  // Measured lazily so values stay correct after a resize/refresh.
-  const measure = () => {
-    if (isStacked()) {
-      const top = carousel.offsetTop; // layout position, ignores the GSAP transform
-      const startY = (title ? title.offsetHeight : 0) + 16 - top; // first card just under the title
-      const endY = window.innerHeight - 24 - top - carousel.offsetHeight; // last card ends near the bottom
-      return { startY, endY, travel: Math.max(0, startY - endY) };
-    }
+    // Measured lazily so values stay correct after a resize/refresh.
+    const measure = () => {
+      if (isStacked()) {
+        const top = carousel.offsetTop; // layout position, ignores the GSAP transform
+        const startY = (title ? title.offsetHeight : 0) + 16 - top; // first card just under the title
+        const endY = window.innerHeight - 24 - top - carousel.offsetHeight; // last card ends near the bottom
+        return { startY, endY, travel: Math.max(0, startY - endY) };
+      }
 
-    const gap = parseFloat(getComputedStyle(carousel).gap) || 0;
-    const blockHeight = blocks[0].offsetHeight;
-    const centerOffset = (window.innerHeight - blockHeight) / 3;
-    const travel = (blocks.length - 1) * (blockHeight + gap);
-    return { startY: centerOffset, endY: centerOffset - travel, travel };
-  };
+      const gap = parseFloat(getComputedStyle(carousel).gap) || 0;
+      const blockHeight = blocks[0].offsetHeight;
+      const centerOffset = (window.innerHeight - blockHeight) / 3;
+      const travel = (blocks.length - 1) * (blockHeight + gap);
+      return { startY: centerOffset, endY: centerOffset - travel, travel };
+    };
 
-  gsap.fromTo(
-    carousel,
-    { y: () => measure().startY },
-    {
-      y: () => measure().endY,
-      ease: "none",
-      scrollTrigger: {
-        trigger: section,
-        start: "top top",
-        end: () => `+=${measure().travel * CONFIG.work.scrollMultiplier}`,
-        pin: true,
-        scrub: true,
-        invalidateOnRefresh: true,
-      },
-    }
-  );
-}
+    const isMobile = () => window.innerWidth <= 800;
+
+    gsap.fromTo(
+      carousel,
+      { y: () => measure().startY },
+      {
+        y: () => measure().endY,
+        ease: "none",
+        scrollTrigger: {
+          trigger: section,
+          start: "top top",
+          end: () =>
+            isMobile()
+              ? `+=${carousel.scrollHeight * 4}`
+              : `+=${measure().travel * CONFIG.work.scrollMultiplier}`,
+          pin: true,
+          scrub: true,
+          invalidateOnRefresh: true,
+        },
+      }
+    );
+  }
 
 
   /* ======================================================================
      6b. Projects
      ====================================================================== */
 
-     
+
   const SVG_NS = "http://www.w3.org/2000/svg";
 
   /** Small seeded random generator, so each card gets its own fixed pattern. */
@@ -917,7 +935,7 @@ function applyProgress(progress, isVisible = false) {
     ScrollTrigger.config({ ignoreMobileResize: true });
 
 
-    
+
     const lenis = initSmoothScroll();
     const menu = initMenu({ lenis });
     initAnchorLinks({ lenis, menu });
